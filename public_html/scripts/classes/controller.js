@@ -12,16 +12,17 @@
   * 
   * @param {type} sName
   * @param {type} oBeforeShow
-  * @param {type} oAfterShow
   * @param {type} oPageShow
   * @returns nothing
   */
- mpage = function(sName,oBeforeShow,oPageShow)
+ mpage = function(sName,oBeforeShow,oPageShow,oController)
  {
      this.m_sName = sName;
      this.m_oBeforeShow = oBeforeShow;
      
      this.m_oPageShow   = oPageShow;
+     
+     this.m_oController = oController;
           
      mpage.prototype.m_othis.InitEvents();
  };
@@ -69,20 +70,34 @@
          if(mpage.prototype.m_othis.m_oBeforeShow() !== null)
              return mpage.prototype.m_othis.m_oBeforeShow();
      },
-   
+     getControllerObject:function()
+     {
+         return mpage.prototype.m_othis.m_oController;
+     },
+     
      /************************************************************/
      
      PageShow:function()
      {
         mpage.prototype.m_othis.getDefaultPageShow();
+           
+        getControllerObject().PageShow(mpage.prototype.m_othis.getName());
+        
      },
      
      PageBeforeShow:function()
      {
-          mpage.prototype.m_othis.getDefaultBeforeShow();
+        mpage.prototype.m_othis.getDefaultBeforeShow();
+        
+        getControllerObject().PageBeforeShow(mpage.prototype.m_othis.getName());
      } 
  };
  
+ 
+ /***
+  * 
+  * @returns {controller}
+  */
  controller = function()
  { 
      
@@ -128,9 +143,9 @@
      addPage:function(sPageID,oBeforeShow,oAfterShow,oPageShow)
      {
          // If a page of this name already exists delete it
-          mpage.prototype.m_othis.deletePage(sPageID);
+          controller.prototype.m_othis.deletePage(sPageID);
           
-          mpage.prototype.m_othis.getPages().push(new mpage(sPageID,oBeforeShow,oAfterShow,oPageShow));
+          controller.prototype.m_othis.getPages().push(new mpage(sPageID,oBeforeShow,oPageShow,controller.prototype.m_othis));
                    
      },
      /***
@@ -146,16 +161,16 @@
          var _oNewArray = [];
          var _bfound = false;
          
-         for(_iLoop = 0;_iLoop<mpage.prototype.m_othis.getPages().length;_iLoop++)
+         for(_iLoop = 0;_iLoop<controller.prototype.m_othis.getPages().length;_iLoop++)
          {
-            if(mpage.prototype.m_othis.getPages[_iLoop].getName !== sPageID)   
+            if(controller.prototype.m_othis.getPages[_iLoop].getName !== sPageID)   
             {
-                _oNewArray.push(mpage.prototype.m_othis.getPages[_iLoop]);
+                _oNewArray.push(controller.prototype.m_othis.getPages[_iLoop]);
                 _bfound = true;
             }
             else 
             {
-                delete mpage.prototype.m_othis.getPages[iLoop];
+                delete controller.prototype.m_othis.getPages[iLoop];
             }
          }
          
@@ -180,9 +195,17 @@
           $(':mobile-pagecontainer').pagecontainer('change', sPageID, {             
                  showLoadMsg: true
            });
-     }   
-  
+     },
      
+     PageShow:function(sPageID)
+     {
+         
+     },
+     PageBeforeShow:function(sPageID)
+     {
+         
+     }
+                    
  };
      
      
